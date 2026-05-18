@@ -4,6 +4,8 @@ import Navbar from '../components/Navbar'
 import useDebounce from '../hooks/useDebounce'
 import { useAuth } from '../context/AuthContext'
 import CreateLeadModal from '../components/CreateLeadModal'
+import EditLeadModal from '../components/EditLeadModal'
+import LeadDetailModal from '../components/LeadDetailModal'
 
 interface Lead {
   _id: string
@@ -33,6 +35,8 @@ const Dashboard = () => {
   const [totalPages, setTotalPages] = useState(1)
   const [total, setTotal] = useState(0)
   const [showModal, setShowModal] = useState(false)
+  const [editLead, setEditLead] = useState<Lead | null>(null)
+  const [viewLead, setViewLead] = useState<Lead | null>(null)
 
   const debouncedSearch = useDebounce(search, 300)
 
@@ -83,7 +87,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-6 py-8">
@@ -91,7 +95,7 @@ const Dashboard = () => {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Leads</h2>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Leads</h2>
             <p className="text-sm text-gray-400">{total} total leads</p>
           </div>
           <div className="flex gap-3">
@@ -104,7 +108,7 @@ const Dashboard = () => {
             {user?.role === 'admin' && (
               <button
                 onClick={handleExport}
-                className="text-sm border border-emerald-600 text-emerald-600 px-4 py-2 rounded-lg hover:bg-emerald-50 transition-colors"
+                className="text-sm border border-emerald-600 text-emerald-600 px-4 py-2 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-950 transition-colors"
               >
                 Export CSV
               </button>
@@ -113,19 +117,19 @@ const Dashboard = () => {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-xl border border-gray-100 p-4 mb-6 flex flex-wrap gap-3">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-4 mb-6 flex flex-wrap gap-3">
           <input
             type="text"
             placeholder="Search by name or email..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1) }}
-            className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 flex-1 min-w-48"
+            className="border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 flex-1 min-w-48"
           />
 
           <select
             value={status}
             onChange={(e) => { setStatus(e.target.value); setPage(1) }}
-            className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
           >
             <option value="">All Status</option>
             <option value="New">New</option>
@@ -137,7 +141,7 @@ const Dashboard = () => {
           <select
             value={source}
             onChange={(e) => { setSource(e.target.value); setPage(1) }}
-            className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
           >
             <option value="">All Sources</option>
             <option value="Website">Website</option>
@@ -148,7 +152,7 @@ const Dashboard = () => {
           <select
             value={sort}
             onChange={(e) => { setSort(e.target.value); setPage(1) }}
-            className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
           >
             <option value="latest">Latest</option>
             <option value="oldest">Oldest</option>
@@ -156,49 +160,58 @@ const Dashboard = () => {
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
           {loading ? (
             <div className="p-12 text-center text-gray-400 text-sm">Loading leads...</div>
           ) : leads.length === 0 ? (
             <div className="p-12 text-center text-gray-400 text-sm">No leads found</div>
           ) : (
             <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-100">
+              <thead className="bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
                 <tr>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Name</th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Email</th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Status</th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Source</th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Created</th>
-                  {user?.role === 'admin' && (
-                    <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Actions</th>
-                  )}
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Name</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Email</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Status</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Source</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Created</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
                 {leads.map((lead) => (
-                  <tr key={lead._id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 text-sm font-medium text-gray-900">{lead.name}</td>
-                    <td className="px-6 py-4 text-sm text-gray-500">{lead.email}</td>
+                  <tr key={lead._id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                    <td
+                      className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white cursor-pointer hover:text-emerald-600"
+                      onClick={() => setViewLead(lead)}
+                    >
+                      {lead.name}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{lead.email}</td>
                     <td className="px-6 py-4">
                       <span className={`text-xs px-2 py-1 rounded-full font-medium ${statusColors[lead.status]}`}>
                         {lead.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">{lead.source}</td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
+                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{lead.source}</td>
+                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                       {new Date(lead.createdAt).toLocaleDateString()}
                     </td>
-                    {user?.role === 'admin' && (
-                      <td className="px-6 py-4">
+                    <td className="px-6 py-4 flex gap-3">
+                      <button
+                        onClick={() => setEditLead(lead)}
+                        className="text-xs text-emerald-600 hover:text-emerald-700 font-medium"
+                      >
+                        Edit
+                      </button>
+                      {user?.role === 'admin' && (
                         <button
                           onClick={() => handleDelete(lead._id)}
                           className="text-xs text-red-500 hover:text-red-600 font-medium"
                         >
                           Delete
                         </button>
-                      </td>
-                    )}
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -214,14 +227,14 @@ const Dashboard = () => {
               <button
                 onClick={() => setPage(p => p - 1)}
                 disabled={page === 1}
-                className="text-sm px-3 py-1.5 border border-gray-200 rounded-lg disabled:opacity-40 hover:bg-gray-50"
+                className="text-sm px-3 py-1.5 border border-gray-200 dark:border-gray-700 dark:text-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-800"
               >
                 Previous
               </button>
               <button
                 onClick={() => setPage(p => p + 1)}
                 disabled={page === totalPages}
-                className="text-sm px-3 py-1.5 border border-gray-200 rounded-lg disabled:opacity-40 hover:bg-gray-50"
+                className="text-sm px-3 py-1.5 border border-gray-200 dark:border-gray-700 dark:text-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-800"
               >
                 Next
               </button>
@@ -233,6 +246,21 @@ const Dashboard = () => {
           <CreateLeadModal
             onClose={() => setShowModal(false)}
             onCreated={fetchLeads}
+          />
+        )}
+
+        {editLead && (
+          <EditLeadModal
+            lead={editLead}
+            onClose={() => setEditLead(null)}
+            onUpdated={fetchLeads}
+          />
+        )}
+
+        {viewLead && (
+          <LeadDetailModal
+            lead={viewLead}
+            onClose={() => setViewLead(null)}
           />
         )}
 
