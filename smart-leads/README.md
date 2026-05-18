@@ -5,6 +5,7 @@ A full-stack lead management dashboard to manage leads, filter and export data, 
 ## Live Demo
 - Frontend: https://gig-flow-wheat.vercel.app
 - Backend API: https://gigflow-94qh.onrender.com/api
+- Demo Video: https://www.loom.com/share/4683bee846e44b8ab9f32c4d7c819b22
 
 ## Test Accounts
 - Admin: `admin@test.com` / `password123`
