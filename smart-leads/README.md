@@ -1,11 +1,19 @@
 # GigFlow — Smart Leads Dashboard
 
-A full-stack lead management dashboard built for the ServiceHive internship assignment. Manage leads, filter and export data, and control access with role-based JWT authentication.
+A full-stack lead management dashboard to manage leads, filter and export data, and control access with role-based JWT authentication.
+
+## Live Demo
+- Frontend: https://gig-flow-wheat.vercel.app
+- Backend API: https://gigflow-94qh.onrender.com/api
+
+## Test Accounts
+- Admin: `admin@test.com` / `password123`
+- Staff: `staff@test.com` / `password123`
 
 ## Tech Stack
 - Frontend: React, TypeScript, Vite, Tailwind CSS
 - Backend: Node.js, Express, MongoDB, JWT
-- Deployment: Vercel (frontend), Railway (backend) / Docker Compose for local development
+- Deployment: Vercel (frontend), Render (backend)
 
 ## Features
 - JWT authentication with role-based access (admin / staff)
@@ -15,93 +23,64 @@ A full-stack lead management dashboard built for the ServiceHive internship assi
 - CSV export (admin only)
 - Dark mode
 
-## Test Accounts
-- Admin: `admin@test.com` / `password123`
-- Staff: `staff@test.com` / `password123`
-
 ## Prerequisites
 - Node.js (v16+ recommended)
 - npm
 - MongoDB (local or hosted) or Docker
 
 ## Environment
-Copy `.env.example` to `.env` in both `server/` and set the required variables. Typical variables:
+Copy `.env.example` to `.env` in `server/` and set the required variables:
 
 - `MONGO_URI` — MongoDB connection string
 - `JWT_SECRET` — JWT signing secret
 - `PORT` — backend port (default: 5000)
 - `CLIENT_URL` — frontend URL for CORS (e.g., http://localhost:5173)
 
-See `server/.env.example` for the exact keys.
-
 ## Quick Start (local)
 
-Backend
-
+**Backend**
 ```bash
-cd server
+cd smart-leads/server
 npm install
 cp .env.example .env
-# Edit .env as needed
 npm run dev
 ```
 
-Frontend
-
+**Frontend**
 ```bash
-cd client
+cd smart-leads/client
 npm install
 cp .env.example .env
-# Edit .env as needed
 npm run dev
 ```
 
-After both start, frontend runs at `http://localhost:5173` and backend at `http://localhost:5000` by default.
+Frontend runs at `http://localhost:5173`, backend at `http://localhost:5000`.
 
-## Docker (optional)
-If you prefer Docker, the repository includes a `docker-compose.yml`. Launch both services with:
-
+## Docker
 ```bash
 docker-compose up --build
 ```
 
 ## API Examples
 
-Login (get JWT)
-
+**Login**
 ```bash
-curl -X POST http://localhost:5000/api/auth/login \
+curl -X POST https://gigflow-94qh.onrender.com/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@test.com","password":"password123"}'
 ```
 
-Get leads (authenticated)
-
+**Get leads**
 ```bash
-curl http://localhost:5000/api/leads \
-  -H "Authorization: Bearer <TOKEN_FROM_LOGIN>"
+curl https://gigflow-94qh.onrender.com/api/leads \
+  -H "Authorization: Bearer <TOKEN>"
 ```
 
-CSV export (admin only)
-
+**CSV export (admin only)**
 ```bash
-curl http://localhost:5000/api/leads/export \
+curl https://gigflow-94qh.onrender.com/api/leads/export \
   -H "Authorization: Bearer <ADMIN_TOKEN>" -o leads.csv
 ```
 
-## Database / Seeding
-Provide a `MONGO_URI` pointing to a local or cloud MongoDB. If you need test data, add a small seeder script under `server/utils` or run the app and create accounts via the Register UI.
-
-## Contributing
-- Fork the repository, open a branch, and send a PR.
-- Run linters and tests (if present) before submitting.
-
-## Tests
-There are no automated tests included by default. Add tests under `server/` or `client/` as needed and document commands here.
-
-## Screenshots / Demo
-Add screenshots or a demo link here when available.
-
 ## Contact
- For questions or feedback, open an issue or contact the maintainer.
-
+For questions or feedback, open an issue or contact the maintainer.

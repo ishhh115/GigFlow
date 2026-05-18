@@ -1,6 +1,6 @@
 # GigFlow API Documentation
 
-Base URL: `https://gigflow-n5ap.onrender.com/api`
+Base URL: `https://gigflow-94qh.onrender.com/api`
 
 ## Authentication
 
