@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  server:
+    build: ./server
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=${mongodb+srv://ishhcodes_db_user:uVd10rmqPFKd29s3@cluster0.adae2v8.mongodb.net/?appName=Cluster0/smartleads}
+      - JWT_SECRET=${smartleads_secret_key_2024}
+      - PORT=5000
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:6
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:

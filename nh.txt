@@ -1,5 +1,0 @@
-uVd10rmqPFKd29s3
-ishhcodes_db_user
-
-
-mongodb+srv://ishhcodes_db_user:uVd10rmqPFKd29s3@cluster0.adae2v8.mongodb.net/?appName=Cluster0/smartleads
